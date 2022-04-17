@@ -3,7 +3,7 @@ from openpyxl import load_workbook
 import pandas as pd
 
 
-def find_not_NaN(self, start, end, sheet):
+def find_not_NaN(start, end, sheet):
     for c in range(start[0], end[0] + 1):
         for r in range(start[1], end[1] + 1):
             if type(sheet.cell(row=r, column=c).value) == str and sheet.cell(row=r, column=c).value:
@@ -37,7 +37,6 @@ class XlsxFile:
     def get_pd(self):
         sheet_list = []
         for sheet_name in self.__wb.get_sheet_names():
-            sheet = self.__wb.get_sheet_by_name(sheet_name)
             sheet_list.append(pd.read_excel(self.__path, sheet_name=sheet_name))
         return sheet_list
 
