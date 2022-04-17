@@ -6,6 +6,7 @@ import io
 from files_objects import XlsxFile
 from abstract_parsers import *
 from global_parser_utilites import TeacherTablePU, GroupTablePU, ClassTablePU
+from data_structures import Table
 
 
 # is not completed
