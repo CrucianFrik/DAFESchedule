@@ -5,7 +5,7 @@ import pprint
 import io
 from files_objects import XlsxFile
 from abstract_parsers import *
-from global_parser_utilites import TeacherTablePU, GroupTablePU, ClassTablePU
+from global_parser_utilites import TeacherTablePU, GroupTablePU, ClassTablePU, ScheduleTablePU
 from table import Table
 
 
@@ -60,11 +60,13 @@ class ParserGoogleSheet(ParserGlobal):
             self.__tables.append(Table("times", ["time"], [
                 ["9:00-10:25", "10:35-12:00", "12:10-13:35", "13:45-15:10", "15:20-16:45", "16:55-18:20",
                  "18:25-19:45"]]))
-            print(self.__tables[3].get_data())
+            self.__tables.append(ScheduleTablePU(*self.__tables).parse())
             print("ParserGoogleSheet: complited")
+            for i in self.__tables:
+                print(i.get_data())
             return self.__tables
         except Exception as e:
-            print("ParserTeacherTable: WARNING!")
+            print("ParserGoogleSheet: WARNING!")
             print(e)
 
     def __init_service_acc(self):

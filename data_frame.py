@@ -4,7 +4,7 @@ from parsers import ParserDataFrame, ParserGoogleSheet
 class DataFrame:
     def __init__(self, resouce, tables=[]):
         self.__tables = tables
-        self.__parser_global = ParserGoogleSheet(resouce, "__dataframe_file.xlsx")
+        self.__parser_global = ParserGoogleSheet(resouce, "dataframe_file.xlsx")
 
         self.__update()
 

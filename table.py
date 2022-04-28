@@ -13,7 +13,7 @@ class Table:
             self.__data = self.__data.convert_dtypes()
 
     def add_line(self, line):
-        li = [self.__data, self.__make_dir(self.__data.columns, line)]
+        li = [self.__data, pd.DataFrame.from_dict(self.__make_dir(self.__data.columns, map(lambda x: [x], line)))]
         self.__data = pd.concat(li, ignore_index=True)
 
     def add_lines(self, columns):
