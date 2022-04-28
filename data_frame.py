@@ -1,14 +1,15 @@
 from datetime import datetime
 from parsers import ParserDataFrame, ParserGoogleSheet
 
+
 class DataFrame:
     def __init__(self, resouce, tables=[]):
         self.__tables = tables
         self.__parser_global = ParserGoogleSheet(resouce, "dataframe_file.xlsx")
+        self.__parser_local = None
 
         self.__update()
 
-        self.__parser_local = ParserDataFrame(self.__tables)
         self.__last_update = datetime.now()
 
     def add(self, table):
@@ -35,10 +36,10 @@ class DataFrame:
 
     def __update(self):
         self.__tables = self.__parser_global.parse()
+        self.__parser_local = ParserDataFrame(self.__tables)
 
     def __check_update(self):
         update_time = 2 * 60 * 60
         if (datetime.now() - self.__last_update).seconds > update_time:
             self.__update()
         return True
-

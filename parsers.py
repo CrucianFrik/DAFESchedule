@@ -1,3 +1,4 @@
+import pandas as pd
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
@@ -11,21 +12,28 @@ from table import Table
 
 # is not completed
 class ParserDataFrame(ParserLocal):
-    def parse(self, msg):
+    def __init__(self, res):
+        super().__init__(res)
+
+    def get_table_data(self, name):
         for i in self._resource:
-            if i.get_name() == "pair":
-                res = self._resource
-        req = msg.get_content()["request"]
+            if i.get_name() == name:
+                return i.get_data()
 
-        if req["courses"]:
-            req["groups"] = req.get("groups", ()) + tuple(
-                self._resource["groups"][(self._resource["groups"]["Course"].isin(req["courses"]))].index)
-            req.pop("courses")
-
-        for param in req:
-            if param != "courses":
-                res = res[(res[param].isin(req[param]))]
-        return res
+    def parse(self, msg):
+        sch_tab = self.get_table_data("pairs")
+        for tb_name, req in msg.get_content()["request"].items():
+            if type(req) != list:
+                req = [req]
+            for r in req:
+                ans = pd.DataFrame()
+                clm, val = r
+                t = self.get_table_data(tb_name)
+                ids = t[t[clm] == val].index
+                for id in ids:
+                    ans = pd.concat([ans, sch_tab[sch_tab[tb_name] == id]])
+                sch_tab = ans
+        return ans
 
 
 class ParserGoogleSheet(ParserGlobal):
@@ -62,8 +70,8 @@ class ParserGoogleSheet(ParserGlobal):
                  "18:25-19:45"]]))
             self.__tables.append(ScheduleTablePU(*self.__tables).parse())
             print("ParserGoogleSheet: complited")
-            for i in self.__tables:
-                print(i.get_data())
+            #for i in self.__tables:
+            #    print(i.get_data())
             return self.__tables
         except Exception as e:
             print("ParserGoogleSheet: WARNING!")

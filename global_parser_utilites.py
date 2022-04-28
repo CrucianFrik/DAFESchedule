@@ -95,7 +95,7 @@ class ScheduleTablePU(GlobalParserUtility):
         self.__teachers = teachers.get_data()
         self.__classes = classes.get_data()
         self.__schedule_table = Table("pairs",
-                                      ["weekday_id", "time_id", "group_id", "class_id", "teacher_id", "subject"],
+                                      ["weekdays", "times", "groups", "classes", "teachers", "subject"],
                                       is_values_int=True)
 
     @staticmethod
@@ -158,6 +158,7 @@ class ScheduleTablePU(GlobalParserUtility):
                                         try:
                                             class_id = self.__classes[self.__classes.number == int(pairInfo[2])].index[0]
                                         except:
+                                            print(pairInfo)
                                             class_id == 'not defined'
                                     else:
                                         class_id = np.nan
@@ -172,15 +173,6 @@ class ScheduleTablePU(GlobalParserUtility):
                                     except:
                                         pass
                                 self.__schedule_table.add_line([w.Index, t.Index, g.Index, class_id, teacher_id, subject])
-                                '''print(w.Index, 
-                                      t.Index, 
-                                      g.Index,
-                                      class_id, 
-                                      teacher_id,
-                                      subject)
-                                print(pairInfo)
-                            print('_______________________')
-                          print()'''
             print("ScheduleTablePU: completed")
             return self.__schedule_table
         except Exception as e:
