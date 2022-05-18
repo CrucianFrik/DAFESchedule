@@ -37,10 +37,8 @@ class ParserDataFrame(ParserLocal):
 
 
 class ParserGoogleSheet(ParserGlobal):
-    def __init__(self, google_file_id, files_path="ParserGoogleSheetFile.xlsx"):
+    def __init__(self, google_file_id, files_path="dataframe_file.xlsx"):
         super().__init__(google_file_id)
-        self.__tables = []
-
         self.__init_service_acc()
 
         self.__xlsx = self.__download_xlsx(google_file_id, files_path)
@@ -60,19 +58,20 @@ class ParserGoogleSheet(ParserGlobal):
     def parse(self):
         try:
             print("ParserGoogleSheet: parsing started")
-            self.__tables.append(TeacherTablePU(self).parse())
-            self.__tables.append(GroupTablePU(self).parse())
-            self.__tables.append(ClassTablePU(self).parse())
-            self.__tables.append(
+            tables = []
+            tables.append(TeacherTablePU(self).parse())
+            tables.append(GroupTablePU(self).parse())
+            tables.append(ClassTablePU(self).parse())
+            tables.append(
                 Table("weekdays", ["weekday"], [["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"]]))
-            self.__tables.append(Table("times", ["time"], [
+            tables.append(Table("times", ["time"], [
                 ["9:00-10:25", "10:35-12:00", "12:10-13:35", "13:45-15:10", "15:20-16:45", "16:55-18:20",
                  "18:25-19:45"]]))
-            self.__tables.append(ScheduleTablePU(*self.__tables).parse())
+            tables.append(ScheduleTablePU(*tables).parse())
             print("ParserGoogleSheet: complited")
             #for i in self.__tables:
             #    print(i.get_data())
-            return self.__tables
+            return tables
         except Exception as e:
             print("ParserGoogleSheet: WARNING!")
             print(e)
