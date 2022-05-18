@@ -140,7 +140,7 @@ class ScheduleTablePU(GlobalParserUtility):
         try:
             sheet_names = list(map(lambda x: str(x) + " курс ", range(1, 7)))  # + ["Аспирантура"]
             for sn in sheet_names:
-                df = pd.read_excel('dataframe_file.xlsx', sheet_name=sn)
+                df = pd.read_excel('dataframe_file.xlsx', sheet_name=sn, engine="openpyxl")
                 df = self.format_schedule_table(df)
                 for w in self.__weekdays.itertuples():
                     for t in self.__times.itertuples():

@@ -30,14 +30,14 @@ class XlsxFile:
 
     def get_sheet(self, name):
         try:
-            return pd.read_excel(self.__path, sheet_name=name)
+            return pd.read_excel(self.__path, sheet_name=name,engine="openpyxl")
         except ValueError as e:
             print(f"\nWRRNING!\n no list '{name}', lists names:", self.__wb.get_sheet_names(), "\n")
 
     def get_pd(self):
         sheet_list = []
         for sheet_name in self.__wb.get_sheet_names():
-            sheet_list.append(pd.read_excel(self.__path, sheet_name=sheet_name))
+            sheet_list.append(pd.read_excel(self.__path, sheet_name=sheet_name, engine="openpyxl"))
         return sheet_list
 
     def __format_range_name(self, _range):  # "C7:H7" -> ((3, 7), (8, 7))
