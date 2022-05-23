@@ -78,7 +78,7 @@ class ParserGoogleSheet(ParserGlobal):
 
     def __init_service_acc(self):
         _scopes = ['https://www.googleapis.com/auth/drive']
-        _service_account_file = 'central-diode-342919-c35aafd1b173.json'
+        _service_account_file = '/home/CrucianFrik/DAFESchedule/central-diode-342919-c35aafd1b173.json'
         credentials = service_account.Credentials.from_service_account_file(
             _service_account_file, scopes=_scopes)
         pp = pprint.PrettyPrinter(indent=4)

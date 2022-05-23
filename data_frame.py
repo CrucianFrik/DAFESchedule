@@ -46,12 +46,8 @@ class DataFrame:
             subject = line[5]
             ans[weekday] = ans.get(weekday, {})
             ans[weekday][time] = ans[weekday].get(time, [group, class_, teacher, subject])
-            print(weekday, time, group, class_, teacher, subject)
-        print(ans)
+
         return ans
-
-
-
 
     def __update(self):
         self.__tables = self.__parser_global.parse()
