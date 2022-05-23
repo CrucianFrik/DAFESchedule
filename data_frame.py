@@ -1,4 +1,7 @@
 from datetime import datetime
+
+import numpy as np
+
 from parsers import ParserDataFrame, ParserGoogleSheet
 
 
@@ -40,7 +43,9 @@ class DataFrame:
             weekday = self.get_table("weekdays").get_data().loc[line[0]].weekday
             time = self.get_table("times").get_data().loc[line[1]].time
             group = self.get_table("groups").get_data().loc[line[2]].group
-            class_ = self.get_table("classes").get_data().loc[line[3]].number
+            class_ = ''
+            if str(line[3]).isdigit():
+                class_ = str(self.get_table("classes").get_data().loc[line[3]].number)
             teacher = self.get_table("teachers").get_data().loc[line[4]]
             teacher = ' '.join([teacher.surname, teacher["name"], teacher.lastname])
             subject = line[5]
