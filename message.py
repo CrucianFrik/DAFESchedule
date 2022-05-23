@@ -21,3 +21,6 @@ class Message:
 
     def get_json(self):
         return json.dumps(self.__content, ensure_ascii=False)
+
+    def check(self, flag):
+        return flag

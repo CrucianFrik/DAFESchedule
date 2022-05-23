@@ -23,16 +23,17 @@ class ParserDataFrame(ParserLocal):
     def parse(self, msg):
         sch_tab = self.get_table_data("pairs")
         for tb_name, req in msg.get_content()["request"].items():
-            if type(req) != list:
-                req = [req]
             for r in req:
-                ans = pd.DataFrame()
-                clm, val = r
-                t = self.get_table_data(tb_name)
-                ids = t[t[clm] == val].index
-                for id in ids:
-                    ans = pd.concat([ans, sch_tab[sch_tab[tb_name] == id]])
-                sch_tab = ans
+                try:
+                    ans = pd.DataFrame()
+                    clm, val = r
+                    t = self.get_table_data(tb_name)
+                    ids = t[t[clm] == val].index
+                    for id in ids:
+                        ans = pd.concat([ans, sch_tab[sch_tab[tb_name] == id]])
+                    sch_tab = ans
+                except:
+                    return pd.DataFrame({"-": [req]})
         return ans
 
 
@@ -69,8 +70,6 @@ class ParserGoogleSheet(ParserGlobal):
                  "18:25-19:45"]]))
             tables.append(ScheduleTablePU(*tables).parse())
             print("ParserGoogleSheet: complited")
-            #for i in self.__tables:
-            #    print(i.get_data())
             return tables
         except Exception as e:
             print("ParserGoogleSheet: WARNING!")
