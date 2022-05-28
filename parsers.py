@@ -10,7 +10,6 @@ from global_parser_utilites import TeacherTablePU, GroupTablePU, ClassTablePU, S
 from table import Table
 
 
-# is not completed
 class ParserDataFrame(ParserLocal):
     def __init__(self, res):
         super().__init__(res)
@@ -23,19 +22,20 @@ class ParserDataFrame(ParserLocal):
     def parse(self, msg):
         sch_tab = self.get_table_data("pairs")
         for tb_name, req in msg.get_content()["request"].items():
-            if type(req) != list:
+            if type(req[0]) != list:
                 req = [req]
             for r in req:
                 try:
                     ans = pd.DataFrame()
                     clm, val = r
+                    val = 'е'.join(val.split('ё'))
                     t = self.get_table_data(tb_name)
                     ids = t[t[clm] == val].index
                     for id_ in ids:
                         ans = pd.concat([ans, sch_tab[sch_tab[tb_name] == id_]])
                     sch_tab = ans
                 except Exception as e:
-                    return pd.DataFrame({"error in request: ": [req, str(e)]})
+                    return {"error": {"error in request: ": r, "msg: ": str(e)}}
         return ans
 
 
@@ -79,7 +79,7 @@ class ParserGoogleSheet(ParserGlobal):
 
     def __init_service_acc(self):
         _scopes = ['https://www.googleapis.com/auth/drive']
-        _service_account_file = '/home/CrucianFrik/DAFESchedule/central-diode-342919-c35aafd1b173.json'
+        _service_account_file = '/home/CrucianFrik/DAFESchedule/DjangoDAFEScheduleApp/central-diode-342919-c35aafd1b173.json'
         credentials = service_account.Credentials.from_service_account_file(
             _service_account_file, scopes=_scopes)
         pp = pprint.PrettyPrinter(indent=4)
@@ -98,5 +98,4 @@ class ParserGoogleSheet(ParserGlobal):
         while done is False:
             status, done = downloader.next_chunk()
             print("Download .xlsx file %d%%." % int(status.progress() * 100))
-
         return XlsxFile(path)

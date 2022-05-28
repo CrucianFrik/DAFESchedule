@@ -1,8 +1,10 @@
 import requests
-dictToSend = {"teachers": [("surname", "Свечников")]}
-res = requests.post('http://crucianfrik.pythonanywhere.com/request/', json=dictToSend)
-print('response from server:',res.text)
-dictFromServer = res.json()
+import time
 
-
-print(requests.get('http://crucianfrik.pythonanywhere.com/response/').json())
+t = time.time()
+dictToSend = {"request": {'weekdays': [('weekday', 'Среда')]}}
+R = requests.get('http://crucianfrik.pythonanywhere.com/response/', json=dictToSend).json()
+for t in R.items():
+    for i in t[1].items():
+        print(t[0], i)
+print(time.time() - t)

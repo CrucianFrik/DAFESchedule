@@ -12,8 +12,8 @@ sys.path.append("..")
 from data_frame import DataFrame
 from message import Message
 
-DF = DataFrame("1s_u2pPZ3xdu_tBrVy7hriV2xj15OP9evJfVAuzFyZSc")
-#req = {}
+RESOURCE = "1s_u2pPZ3xdu_tBrVy7hriV2xj15OP9evJfVAuzFyZSc"
+DF = DataFrame(RESOURCE)
 
 class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
@@ -23,15 +23,19 @@ class ArticleViewSet(viewsets.ModelViewSet):
 class PostReq(APIView):
     def post(self, request, format=None):
         print("POST")
-        return Response(req, status=status.HTTP_201_CREATED)
+        try:
+            print("request.data: ", request.data)
+            m = Message(request.data)
+        except Exception as e:
+            return Response("ERROR in PostRequest: " + str(e))
+
+        return Response(DF.request(m))
 
 
 class GetReq(APIView):
     def get(self, request, format=None):
         print("GET")
         try:
-            m = Message(request.data)
+            return Response(DF.request(m))
         except Exception as e:
-            return Response("ERROR in GetReq " + str(e))
-
-        return Response(DF.request(m))
+            return Response("ERROR in GetRequest: " + str(e))

@@ -1,12 +1,10 @@
 from datetime import datetime
-
-import numpy as np
-
 from parsers import ParserDataFrame, ParserGoogleSheet
 
 
 class DataFrame:
     def __init__(self, resouce, tables=[]):
+        print("CREATING DATAFRAME")
         self.__tables = tables
         self.__parser_global = ParserGoogleSheet(resouce, "dataframe_file.xlsx")
         self.__parser_local = None
@@ -14,6 +12,7 @@ class DataFrame:
         self.__update()
 
         self.__last_update = datetime.now()
+        print("DATAFRAME CREATED")
 
     def add(self, table):
         for t in self.__tables:
@@ -31,10 +30,9 @@ class DataFrame:
 
     def request(self, msg):
         if (msg.need_update()):
-            print("TABLE UPDATE")
+            print("TABLES WILL BE UPDATE")
             self.__update()
         df = self.__parser_local.parse(msg)
-        print("request log: \n", df.to_json())
         return self.__to_json(df)
 
     def print_tables(self):  # to del
@@ -42,7 +40,13 @@ class DataFrame:
             print(i.get___data())
 
     def __to_json(self, df):
-        ans = {}
+        ans = {"lessons_list": []} #}
+        try:
+            print("__TO_JSON")
+            print(df["error"])
+            return df
+        except:
+            pass
         for num, line in df.iterrows():
             try:
                 weekday = self.get_table("weekdays").get_data().loc[line[0]].weekday
@@ -50,9 +54,11 @@ class DataFrame:
                 weekday = str(e)
             time = self.get_table("times").get_data().loc[line[1]].time
             group = self.get_table("groups").get_data().loc[line[2]].group
+
             class_ = '-'
             if str(line[3]).isdigit():
                 class_ = str(self.get_table("classes").get_data().loc[line[3]].number)
+
             teacher = '-'
             if line[4]:
                 try:
@@ -60,13 +66,14 @@ class DataFrame:
                     teacher = ' '.join([teacher.surname, teacher["name"], teacher.lastname])
                 except:
                     pass
+
             subject = '-'
             try:
                 subject = line[5]
             except:
                 pass
-            ans[weekday] = ans.get(weekday, {})
-            ans[weekday][time] = ans[weekday].get(time, [group, class_, teacher, subject])
+
+            ans["lessons_list"].append({"group": group,"day": weekday,"time": time,"subj": subject,"teacher":teacher,"aud":class_})
 
         return ans
 
