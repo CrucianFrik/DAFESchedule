@@ -30,8 +30,12 @@ class DataFrame:
                 return t
 
     def request(self, msg):
-        self.__check_update()
-        return self.__to_json(self.__parser_local.parse(msg))
+        if (msg.need_update()):
+            print("TABLE UPDATE")
+            self.__update()
+        df = self.__parser_local.parse(msg)
+        print("request log: \n", df.to_json())
+        return self.__to_json(df)
 
     def print_tables(self):  # to del
         for i in self.__tables:
@@ -40,7 +44,10 @@ class DataFrame:
     def __to_json(self, df):
         ans = {}
         for num, line in df.iterrows():
-            weekday = self.get_table("weekdays").get_data().loc[line[0]].weekday
+            try:
+                weekday = self.get_table("weekdays").get_data().loc[line[0]].weekday
+            except Exception as e:
+                weekday = str(e)
             time = self.get_table("times").get_data().loc[line[1]].time
             group = self.get_table("groups").get_data().loc[line[2]].group
             class_ = '-'

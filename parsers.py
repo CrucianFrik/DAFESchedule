@@ -23,17 +23,19 @@ class ParserDataFrame(ParserLocal):
     def parse(self, msg):
         sch_tab = self.get_table_data("pairs")
         for tb_name, req in msg.get_content()["request"].items():
+            if type(req) != list:
+                req = [req]
             for r in req:
                 try:
                     ans = pd.DataFrame()
                     clm, val = r
                     t = self.get_table_data(tb_name)
                     ids = t[t[clm] == val].index
-                    for id in ids:
-                        ans = pd.concat([ans, sch_tab[sch_tab[tb_name] == id]])
+                    for id_ in ids:
+                        ans = pd.concat([ans, sch_tab[sch_tab[tb_name] == id_]])
                     sch_tab = ans
-                except:
-                    return pd.DataFrame({"-": [req]})
+                except Exception as e:
+                    return pd.DataFrame({"error in request: ": [req, str(e)]})
         return ans
 
 
