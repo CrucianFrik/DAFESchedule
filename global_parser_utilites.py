@@ -59,7 +59,9 @@ class ClassTablePU(GlobalParserUtility):
     def parse(self):
         try:
             sheet_values = self._global_parser.get_sheet("аудиторный фонд")
-            classes = list(filter(lambda x: str(x).isdigit(), sheet_values.loc[0]))
+            #print(list(map(lambda x: str(x), sheet_values.loc[0])))
+            classes = list(filter(lambda x: str(x).isdigit(), list(map(lambda x: str(x), sheet_values.loc[0]))))
+            print(classes)
             print("ClassTablePU: completed")
             return Table("classes", ["number"], [classes])
         except Exception as e:
@@ -156,10 +158,10 @@ class ScheduleTablePU(GlobalParserUtility):
                                 else:
                                     if pairInfo[2].isdigit():
                                         try:
-                                            class_id = self.__classes[self.__classes.number == int(pairInfo[2])].index[0]
+                                            class_id = self.__classes[self.__classes.number == pairInfo[2]].index[0]
                                         except:
-                                            print(pairInfo)
                                             class_id == 'not defined'
+                                            print(pairInfo)
                                     else:
                                         class_id = np.nan
                                     try:

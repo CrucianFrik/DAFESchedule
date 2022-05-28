@@ -43,14 +43,28 @@ class DataFrame:
             weekday = self.get_table("weekdays").get_data().loc[line[0]].weekday
             time = self.get_table("times").get_data().loc[line[1]].time
             group = self.get_table("groups").get_data().loc[line[2]].group
-            class_ = ''
+
+            class_ = '-'
             if str(line[3]).isdigit():
                 class_ = str(self.get_table("classes").get_data().loc[line[3]].number)
-            teacher = self.get_table("teachers").get_data().loc[line[4]]
-            teacher = ' '.join([teacher.surname, teacher["name"], teacher.lastname])
-            subject = line[5]
-            ans[weekday] = ans.get(weekday, {})
-            ans[weekday][time] = ans[weekday].get(time, [group, class_, teacher, subject])
+
+            teacher = '-'
+            if line[4]:
+                try:
+                    teacher = self.get_table("teachers").get_data().loc[line[4]]
+                    teacher = ' '.join([teacher.surname, teacher["name"], teacher.lastname])
+                except:
+                    pass
+
+            subject = '-'
+            try:
+                subject = line[5]
+            except:
+                pass
+
+            ans[group] = ans.get(group, {})
+            ans[group][weekday] = ans[group].get(weekday, [])
+            ans[group][weekday].append([time, subject, teacher, class_])
 
         return ans
 

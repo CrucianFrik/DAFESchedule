@@ -69,8 +69,6 @@ class ParserGoogleSheet(ParserGlobal):
                  "18:25-19:45"]]))
             tables.append(ScheduleTablePU(*tables).parse())
             print("ParserGoogleSheet: complited")
-            #for i in self.__tables:
-            #    print(i.get_data())
             return tables
         except Exception as e:
             print("ParserGoogleSheet: WARNING!")
@@ -78,7 +76,7 @@ class ParserGoogleSheet(ParserGlobal):
 
     def __init_service_acc(self):
         _scopes = ['https://www.googleapis.com/auth/drive']
-        _service_account_file = '/home/CrucianFrik/DAFESchedule/central-diode-342919-c35aafd1b173.json'
+        _service_account_file = 'central-diode-342919-c35aafd1b173.json'
         credentials = service_account.Credentials.from_service_account_file(
             _service_account_file, scopes=_scopes)
         pp = pprint.PrettyPrinter(indent=4)
@@ -97,5 +95,4 @@ class ParserGoogleSheet(ParserGlobal):
         while done is False:
             status, done = downloader.next_chunk()
             print("Download .xlsx file %d%%." % int(status.progress() * 100))
-
         return XlsxFile(path)
