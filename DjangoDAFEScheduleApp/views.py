@@ -33,4 +33,6 @@ class GetReq(APIView):
         m = Message()
         m.add_request(req)
 
+        if not m.check(0):
+            return Response({"ERROR"})
         return Response(DF.request(m))

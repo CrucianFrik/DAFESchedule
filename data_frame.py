@@ -1,7 +1,4 @@
 from datetime import datetime
-
-import numpy as np
-
 from parsers import ParserDataFrame, ParserGoogleSheet
 
 

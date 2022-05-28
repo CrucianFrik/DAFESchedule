@@ -10,7 +10,6 @@ from global_parser_utilites import TeacherTablePU, GroupTablePU, ClassTablePU, S
 from table import Table
 
 
-# is not completed
 class ParserDataFrame(ParserLocal):
     def __init__(self, res):
         super().__init__(res)
@@ -25,14 +24,20 @@ class ParserDataFrame(ParserLocal):
         for tb_name, req in msg.get_content()["request"].items():
             if type(req) != list:
                 req = [req]
+
             for r in req:
-                ans = pd.DataFrame()
-                clm, val = r
-                t = self.get_table_data(tb_name)
-                ids = t[t[clm] == val].index
-                for id in ids:
-                    ans = pd.concat([ans, sch_tab[sch_tab[tb_name] == id]])
-                sch_tab = ans
+                try:
+                    ans = pd.DataFrame()
+                    clm, val = r
+                    t = self.get_table_data(tb_name)
+                    ids = t[t[clm] == val].index
+                    for id in ids:
+                        ans = pd.concat([ans, sch_tab[sch_tab[tb_name] == id]])
+                    sch_tab = ans
+                except Exception as e:
+                    print("WARNING IN LOCAL PARSER:")
+                    print(e)
+                    return pd.DataFrame({"-": [req]})
         return ans
 
 

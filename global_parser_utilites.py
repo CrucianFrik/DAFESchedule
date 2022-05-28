@@ -59,9 +59,7 @@ class ClassTablePU(GlobalParserUtility):
     def parse(self):
         try:
             sheet_values = self._global_parser.get_sheet("аудиторный фонд")
-            #print(list(map(lambda x: str(x), sheet_values.loc[0])))
             classes = list(filter(lambda x: str(x).isdigit(), list(map(lambda x: str(x), sheet_values.loc[0]))))
-            print(classes)
             print("ClassTablePU: completed")
             return Table("classes", ["number"], [classes])
         except Exception as e:
