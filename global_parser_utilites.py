@@ -30,11 +30,6 @@ class TeacherTablePU(GlobalParserUtility):
             for i in range(len(sheet_values)):
                 teachers.add_line(
                     sheet_values.iloc[i]["Преподаватель"].split() + [sheet_values.iloc[i]["Должность"].lower()])
-                '''try:
-                    teachers.add_line(
-                        sheet_values.iloc[i]["Преподаватель"].split() + [sheet_values.iloc[i]["Должность"].lower()])
-                except Exception as e:
-                    print(sheet_values.iloc[i])'''
 
             teachers.sort_by("surname")
             teachers.reset_index()
@@ -78,7 +73,7 @@ class GroupTablePU(GlobalParserUtility):
                 sheet_values = self._global_parser.get_sheet(str(num) + " курс ")
                 group_names = list(map(str, filter(lambda x: x and not str(x).isalpha(), sheet_values.loc[1])))
                 groups.add_lines(
-                    [[num] * len(group_names), group_names, sheet_values.loc[2][2:]])  # (cource, group_name)
+                    [[str(num)] * len(group_names), group_names, sheet_values.loc[2][2:]])  # (cource, group_name)
             print("ParserGroupTable: complited")
             return groups
         except Exception as e:
@@ -144,7 +139,7 @@ class ScheduleTablePU(GlobalParserUtility):
                 df = self.format_schedule_table(df)
                 for w in self.__weekdays.itertuples():
                     for t in self.__times.itertuples():
-                        for g in self.__groups[self.__groups.course == int(sn[0])].itertuples():  # int(sn[0]) - номер курса
+                        for g in self.__groups[self.__groups.course == sn[0]].itertuples():  # int(sn[0]) - номер курса
                             pairInfo = self.get_value(
                                 df[(df["weekday"] == w.weekday) & (df["time"] == t.time)][g.group + "/" + g.profile])
                             if not self.is_pair_free(pairInfo):
@@ -159,7 +154,6 @@ class ScheduleTablePU(GlobalParserUtility):
                                             class_id = self.__classes[self.__classes.number == pairInfo[2]].index[0]
                                         except:
                                             class_id == 'not defined'
-                                            print(pairInfo)
                                     else:
                                         class_id = np.nan
                                     try:

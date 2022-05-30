@@ -4,6 +4,7 @@ from parsers import ParserDataFrame, ParserGoogleSheet
 
 class DataFrame:
     def __init__(self, resouce, tables=[]):
+        print("CREATING DATAFRAME")
         self.__tables = tables
         self.__parser_global = ParserGoogleSheet(resouce, "dataframe_file.xlsx")
         self.__parser_local = None
@@ -11,6 +12,7 @@ class DataFrame:
         self.__update()
 
         self.__last_update = datetime.now()
+        print("DATAFRAME CREATED")
 
     def add(self, table):
         for t in self.__tables:
@@ -28,18 +30,32 @@ class DataFrame:
 
     def request(self, msg):
         self.__check_update()
-        return self.__to_json(self.__parser_local.parse(msg))
+        if (msg.need_update()):
+            print("TABLES WILL BE UPDATE")
+            self.__update()
+        df = self.__parser_local.parse(msg)
+        return self.__to_json(df)
 
     def print_tables(self):  # to del
         for i in self.__tables:
             print(i.get___data())
 
     def __to_json(self, df):
-        ans = {}
+        ans = {"lessons_list": []} #}
+        try:
+            print("__TO_JSON")
+            print(df["error"])
+            return df
+        except:
+            pass
         for num, line in df.iterrows():
-            weekday = self.get_table("weekdays").get_data().loc[line[0]].weekday
+            try:
+                weekday = self.get_table("weekdays").get_data().loc[line[0]].weekday
+            except Exception as e:
+                weekday = str(e)
             time = self.get_table("times").get_data().loc[line[1]].time
             group = self.get_table("groups").get_data().loc[line[2]].group
+            chair = self.get_table("groups").get_data().loc[line[2]].profile
 
             class_ = '-'
             if str(line[3]).isdigit():
@@ -59,9 +75,7 @@ class DataFrame:
             except:
                 pass
 
-            ans[group] = ans.get(group, {})
-            ans[group][weekday] = ans[group].get(weekday, [])
-            ans[group][weekday].append([time, subject, teacher, class_])
+            ans["lessons_list"].append({"group": group, "chair": chair, "day": weekday,"time": time,"subj": subject,"teacher":teacher,"aud":class_})
 
         return ans
 
@@ -70,7 +84,8 @@ class DataFrame:
         self.__parser_local = ParserDataFrame(self.__tables)
 
     def __check_update(self):
-        update_time = 2 * 60 * 60
+        update_time = 2 * 60 * 20
         if (datetime.now() - self.__last_update).seconds > update_time:
             self.__update()
+            self.__last_update = datetime.now()
         return True

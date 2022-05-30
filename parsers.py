@@ -20,25 +20,34 @@ class ParserDataFrame(ParserLocal):
                 return i.get_data()
 
     def parse(self, msg):
-        sch_tab = self.get_table_data("pairs")
+        data_source = self.get_table_data("pairs")
+        param_sch_tab = data_source
         for tb_name, req in msg.get_content()["request"].items():
-            if type(req) != list:
-                req = [req]
-
-            for r in req:
-                try:
-                    ans = pd.DataFrame()
-                    clm, val = r
-                    t = self.get_table_data(tb_name)
-                    ids = t[t[clm] == val].index
-                    for id in ids:
-                        ans = pd.concat([ans, sch_tab[sch_tab[tb_name] == id]])
-                    sch_tab = ans
-                except Exception as e:
-                    print("WARNING IN LOCAL PARSER:")
-                    print(e)
-                    return pd.DataFrame({"-": [req]})
-        return ans
+            ans = pd.DataFrame()
+            for params in req:
+                param_sch_tab = data_source
+                for item in params.items():
+                    print("R:")#
+                    try:
+                        tmp = data_source[data_source.weekdays == "nthg"]
+                        print(item)#
+                        clm, val = item
+                        val = 'е'.join(val.split('ё'))
+                        item_table = self.get_table_data(tb_name)
+                        ids = item_table[item_table[clm] == val].index
+                        print("IDS: ", ids)
+                        for id_ in ids:
+                            print(param_sch_tab[tb_name])
+                            print(tmp)
+                            tmp = pd.concat([tmp, param_sch_tab[param_sch_tab[tb_name] == id_]])
+                            print(tmp)#
+                        param_sch_tab = tmp
+                    except Exception as e:
+                        return {"error": {"error in request: ": item, "msg: ": str(e)}}
+                ans = pd.concat([ans, param_sch_tab])
+                print(ans)
+            data_source = ans
+        return data_source
 
 
 class ParserGoogleSheet(ParserGlobal):
@@ -81,7 +90,7 @@ class ParserGoogleSheet(ParserGlobal):
 
     def __init_service_acc(self):
         _scopes = ['https://www.googleapis.com/auth/drive']
-        _service_account_file = 'central-diode-342919-c35aafd1b173.json'
+        _service_account_file = '/home/CrucianFrik/DAFESchedule/DjangoDAFEScheduleApp/central-diode-342919-c35aafd1b173.json'
         credentials = service_account.Credentials.from_service_account_file(
             _service_account_file, scopes=_scopes)
         pp = pprint.PrettyPrinter(indent=4)
