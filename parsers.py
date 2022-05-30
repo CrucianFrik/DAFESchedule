@@ -20,23 +20,34 @@ class ParserDataFrame(ParserLocal):
                 return i.get_data()
 
     def parse(self, msg):
-        sch_tab = self.get_table_data("pairs")
+        data_source = self.get_table_data("pairs")
+        param_sch_tab = data_source
         for tb_name, req in msg.get_content()["request"].items():
-            if type(req[0]) != list:
-                req = [req]
-            for r in req:
-                try:
-                    ans = pd.DataFrame()
-                    clm, val = r
-                    val = 'е'.join(val.split('ё'))
-                    t = self.get_table_data(tb_name)
-                    ids = t[t[clm] == val].index
-                    for id_ in ids:
-                        ans = pd.concat([ans, sch_tab[sch_tab[tb_name] == id_]])
-                    sch_tab = ans
-                except Exception as e:
-                    return {"error": {"error in request: ": r, "msg: ": str(e)}}
-        return ans
+            ans = pd.DataFrame()
+            for params in req:
+                param_sch_tab = data_source
+                for item in params.items():
+                    print("R:")#
+                    try:
+                        tmp = data_source[data_source.weekdays == "nthg"]
+                        print(item)#
+                        clm, val = item
+                        val = 'е'.join(val.split('ё'))
+                        item_table = self.get_table_data(tb_name)
+                        ids = item_table[item_table[clm] == val].index
+                        print("IDS: ", ids)
+                        for id_ in ids:
+                            print(param_sch_tab[tb_name])
+                            print(tmp)
+                            tmp = pd.concat([tmp, param_sch_tab[param_sch_tab[tb_name] == id_]])
+                            print(tmp)#
+                        param_sch_tab = tmp
+                    except Exception as e:
+                        return {"error": {"error in request: ": item, "msg: ": str(e)}}
+                ans = pd.concat([ans, param_sch_tab])
+                print(ans)
+            data_source = ans
+        return data_source
 
 
 class ParserGoogleSheet(ParserGlobal):

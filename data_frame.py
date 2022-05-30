@@ -29,6 +29,7 @@ class DataFrame:
                 return t
 
     def request(self, msg):
+        self.__check_update()
         if (msg.need_update()):
             print("TABLES WILL BE UPDATE")
             self.__update()
@@ -54,6 +55,7 @@ class DataFrame:
                 weekday = str(e)
             time = self.get_table("times").get_data().loc[line[1]].time
             group = self.get_table("groups").get_data().loc[line[2]].group
+            chair = self.get_table("groups").get_data().loc[line[2]].profile
 
             class_ = '-'
             if str(line[3]).isdigit():
@@ -73,7 +75,7 @@ class DataFrame:
             except:
                 pass
 
-            ans["lessons_list"].append({"group": group,"day": weekday,"time": time,"subj": subject,"teacher":teacher,"aud":class_})
+            ans["lessons_list"].append({"group": group, "chair": chair, "day": weekday,"time": time,"subj": subject,"teacher":teacher,"aud":class_})
 
         return ans
 
@@ -82,7 +84,8 @@ class DataFrame:
         self.__parser_local = ParserDataFrame(self.__tables)
 
     def __check_update(self):
-        update_time = 2 * 60 * 60
+        update_time = 2 * 60 * 20
         if (datetime.now() - self.__last_update).seconds > update_time:
             self.__update()
+            self.__last_update = datetime.now()
         return True
