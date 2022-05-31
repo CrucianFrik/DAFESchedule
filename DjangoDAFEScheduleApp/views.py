@@ -37,7 +37,9 @@ class PostReq(APIView):
         return Response(DF.request(m))#
 
 
+#нужен для отладки в проекте не описан
 class GetReq(APIView):
+    global last_req
     def get(self, format=None):
         print("GET")
         return Response("request body: " + str(last_req))

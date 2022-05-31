@@ -42,12 +42,8 @@ class DataFrame:
 
     def __to_json(self, df):
         ans = {"lessons_list": []} #}
-        try:
-            print("__TO_JSON")
-            print(df["error"])
+        if df.get("error", False):
             return df
-        except:
-            pass
         for num, line in df.iterrows():
             try:
                 weekday = self.get_table("weekdays").get_data().loc[line[0]].weekday

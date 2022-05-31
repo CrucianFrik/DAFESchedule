@@ -27,25 +27,18 @@ class ParserDataFrame(ParserLocal):
             for params in req:
                 param_sch_tab = data_source
                 for item in params.items():
-                    print("R:")#
                     try:
                         tmp = data_source[data_source.weekdays == "nthg"]
-                        print(item)#
                         clm, val = item
                         val = 'е'.join(val.split('ё'))
                         item_table = self.get_table_data(tb_name)
                         ids = item_table[item_table[clm] == val].index
-                        print("IDS: ", ids)
                         for id_ in ids:
-                            print(param_sch_tab[tb_name])
-                            print(tmp)
                             tmp = pd.concat([tmp, param_sch_tab[param_sch_tab[tb_name] == id_]])
-                            print(tmp)#
                         param_sch_tab = tmp
                     except Exception as e:
                         return {"error": {"error in request: ": item, "msg: ": str(e)}}
                 ans = pd.concat([ans, param_sch_tab])
-                print(ans)
             data_source = ans
         return data_source
 
