@@ -28,7 +28,6 @@ class PostReq(APIView):
     def post(self, request, format=None):
         print("POST")
         try:
-            print("request.data: ", request.data)
             last_req = request.data
             m = Message(request.data)
         except Exception as e:

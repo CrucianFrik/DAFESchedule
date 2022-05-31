@@ -15,7 +15,6 @@ class Message:
         self.__content = {'request': dict(), 'update': False}
         if json_:
             self.__load(json_)
-            print(self.__content)
         print("MESSAGE::__content: ", self.__content)
         try:
             self.__check_content()
