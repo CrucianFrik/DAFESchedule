@@ -45,9 +45,9 @@ class Message:
                     self.__content['request'][req_elem] = []
                     for elem in json_[req_elem]:
                         line = {}
-                        for gap, cont in elem.items():
-                            if cont:
-                                line[gap] = cont
+                        for gap, val in elem.items():
+                            if val:
+                                line[gap] = self.__check_makros(gap, val)
                         if line:
                             self.__content['request'][req_elem].append(line)
                 json_.pop(req_elem)
@@ -55,7 +55,7 @@ class Message:
         for req_elem, column in zip(["classes", "weekdays", "times"], ["number", "weekday", "time"]):
             if json_.get(req_elem, False) != False:
                 if json_[req_elem]:
-                    self.__content['request'][req_elem] = list(map(lambda val: {column: val}, json_[req_elem]))
+                    self.__content['request'][req_elem] = list(map(lambda val: {column: self.__check_makros(req_elem, val)}, json_[req_elem]))
                 json_.pop(req_elem)
 
         if len(json_) != 0:
@@ -70,3 +70,40 @@ class Message:
 
         if len(self.__content) > 2:
             raise RequestError("Некорректное количество полей в запросе. Необходимые: 'request'; опциональные: 'update'")
+
+    def __check_makros(self, gap, val):
+        if gap == "surname":
+            if val.lower() == "хых":
+                return "Сизых"
+
+            if val.lower() == "серыч":
+                return "Серохвостов"
+
+            if val.lower() == "бур":
+                return "Бурмистров"
+
+            if val.lower() == "беспорт":
+                return "Беспорточный"
+
+            if val.lower() == "жиж":
+                return "Животов"
+
+            if val.lower() in ["гречников", "удод мохнатый"]:
+                return "Свечников"
+
+            if val.lower() == "сказочник":
+                return "Фёдоров"
+
+        if gap == "group":
+            if val.isdigit() and val[0] != "8":
+                return "Б03-"+val
+
+        if gap == "classes":
+            if val.lower() == "бма":
+                return "306"
+
+            if val.lower() == "бфа":
+                return "314"
+
+        return val
+

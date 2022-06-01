@@ -61,7 +61,7 @@ class DataFrame:
             if line[4]:
                 try:
                     teacher = self.get_table("teachers").get_data().loc[line[4]]
-                    teacher = ' '.join([teacher.surname, teacher["name"], teacher.lastname])
+                    teacher = teacher.surname+" "+teacher["name"][0]+"."+teacher.lastname[0]+"."
                 except:
                     pass
 
@@ -80,7 +80,7 @@ class DataFrame:
         self.__parser_local = ParserDataFrame(self.__tables)
 
     def __check_update(self):
-        update_time = 2 * 60 * 20
+        update_time = 20 * 60 * 60
         if (datetime.now() - self.__last_update).seconds > update_time:
             self.__update()
             self.__last_update = datetime.now()
